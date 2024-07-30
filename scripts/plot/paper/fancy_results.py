@@ -69,21 +69,10 @@ fig, axes = plot_model_output_arts_reduced(
     lw_vars,
     sw_vars,
     f_vals,
+    parameters
 )
 fig.tight_layout()
-fig.savefig("plots/paper/reduced_results.png", dpi=500, bbox_inches="tight")
-# %% plor fancy results
-fig, axes = plot_model_output_arts_fancy(
-    result,
-    iwp_bins,
-    atms,
-    fluxes_3d_noice,
-    lw_vars,
-    sw_vars,
-    f_vals,
-)
-
-fig.savefig("plots/paper/fancy_results.png", dpi=500, bbox_inches="tight")
+fig.savefig("plots/presentation/reduced_results.png", dpi=500, bbox_inches="tight")
 
 # %% plot CRE Comparison
 fig, ax = plt.subplots(figsize=(6, 4))
@@ -96,9 +85,9 @@ ax.plot(
     color="black",
     linestyle="--",
 )
-ax.plot(result.index, result["SW_cre"], color="blue")
-ax.plot(result.index, result["LW_cre"], color="red")
-ax.plot(result.index, result["SW_cre"] + result["LW_cre"], color="black")
+#ax.plot(result.index, result["SW_cre"], color="blue")
+#ax.plot(result.index, result["LW_cre"], color="red")
+#ax.plot(result.index, result["SW_cre"] + result["LW_cre"], color="black")
 ax.set_xscale("log")
 ax.set_xlim(1e-5, 1)
 ax.set_xlabel("IWP / kg m$^{-2}$")
@@ -114,6 +103,6 @@ handles = [
 ]
 labels = ["ARTS", "Conceptual Model", "LW", "SW", "Net"]
 fig.legend(handles, labels, bbox_to_anchor=(0.95, -0.04), ncol=5)
-fig.savefig("plots/paper/cre_comparison.png", dpi=500, bbox_inches="tight")
+fig.savefig("plots/presentation/cre_comparison_arts.png", dpi=500, bbox_inches="tight")
 
 # %%

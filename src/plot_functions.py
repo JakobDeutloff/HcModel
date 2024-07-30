@@ -720,7 +720,7 @@ def plot_model_output_arts_with_cre(
         s=0.1,
         color="grey",
     )
-    ax1.plot(result["T_hc"], color="red", linestyle="--", label=r"$T(I)$")
+    ax1.plot(result["T_hc"], color="red", linestyle="--", label=r"$T_{\mathrm{hc}}(I)$")
     ax1.set_ylabel(r"HC Temperature / K")
     ax1.set_yticks([200, 240])
     ax1.legend()
@@ -735,7 +735,7 @@ def plot_model_output_arts_with_cre(
     )
 
     ax2.plot(mean_lw_vars['binned_emissivity'], color="orange", label="Mean")
-    ax2.plot(result["em_hc"], color="red", label=r"$\varepsilon(I)$", linestyle="--")
+    ax2.plot(result["em_hc"], color="red", label=r"$\varepsilon_{\mathrm{hc}}(I)$", linestyle="--")
     ax2.set_ylabel(r"HC Emissivity")
     ax2.set_yticks([0, 1])
     ax2.legend()
@@ -746,7 +746,7 @@ def plot_model_output_arts_with_cre(
     ax3.plot(
         IWP_points,
         f_lc_vals["unconnected"],
-        label=r"$f(I)$",
+        label=r"$f_{\mathrm{lc}}(I)$",
         color="purple",
         linestyle="--",
     )
@@ -754,7 +754,7 @@ def plot_model_output_arts_with_cre(
         result["lc_fraction"],
         color="red",
         linestyle="--",
-        label=r"$f$",
+        label=r"$f_{\mathrm{lc}}$",
     )
     ax3.legend()
     ax3.set_ylabel(r"Low-Cloud Fraction")
@@ -762,7 +762,6 @@ def plot_model_output_arts_with_cre(
 
     # alpha
     ax4 = fig.add_subplot(6, 2, 4)
-
     sc_alpha = ax4.scatter(
         cut_data(atms["IWP"], mask_tuning),
         cut_data(sw_vars["high_cloud_albedo"], mask_tuning),
@@ -771,7 +770,7 @@ def plot_model_output_arts_with_cre(
         cmap="viridis",
     )
     ax4.plot(mean_sw_vars["interpolated_albedo"], color="orange", label="Mean")
-    ax4.plot(result["alpha_hc"], color="red", linestyle="--", label=r"$\alpha_{\mathrm{h}}(I)$")
+    ax4.plot(result["alpha_hc"], color="red", linestyle="--", label=r"$\alpha_{\mathrm{hc}}(I)$")
     ax4.set_ylabel(r"HC Albedo")
     ax4.legend()
     ax4.set_yticks([0, 0.8])
@@ -808,7 +807,7 @@ def plot_model_output_arts_with_cre(
     ) * (-1)
     ax5.plot(IWP_points, mean_rt, color="orange", label="Mean")
     ax5.axhline(-params["R_cs"], color="black", linestyle="--", label=r"$R_{\mathrm{cs}}$")
-    ax5.axhline(-params["R_l"], color="navy", linestyle="--", label=r"$R_{\mathrm{l}}$")
+    ax5.axhline(-params["R_l"], color="navy", linestyle="--", label=r"$R_{\mathrm{lc}}$")
     ax5.plot(-result["R_t"], color="red", linestyle="--", label=r"$R_{\mathrm{t}}(I)$")
     ax5.set_ylabel(r"LT LW Emissions / $\mathrm{W ~ m^{-2}}$")
     ax5.legend()
@@ -844,7 +843,7 @@ def plot_model_output_arts_with_cre(
     )
     ax6.plot(IWP_points, mean_a_t, color="orange", label="Mean")
     ax6.axhline(params["a_cs"], color="black", linestyle="--", label=r"$\alpha_{\mathrm{cs}}$")
-    ax6.axhline(params["a_l"], color="navy", linestyle="--", label=r"$\alpha_{\mathrm{l}}$")
+    ax6.axhline(params["a_l"], color="navy", linestyle="--", label=r"$\alpha_{\mathrm{lc}}$")
     ax6.plot(result["alpha_t"], color="red", linestyle="--", label=r"$\alpha_{\mathrm{t}}$")
     ax6.set_ylabel(r"LT Albedo")
     ax6.legend()
@@ -915,7 +914,6 @@ def plot_model_output_arts_with_cre(
     # plot CRE
 
     return fig, axes
-
 
 
 def plot_model_output_icon_with_cre(
@@ -1280,11 +1278,8 @@ def plot_model_output_arts_reduced(
     fluxes_3d_noice,
     lw_vars,
     sw_vars,
-    lw_binned_vars,
-    sw_binned_vars,
     f_lc_vals,
-    lc_consts,
-    cs_consts,
+    parameters,
 ):
     fig = plt.figure(figsize=(12, 5))
     mask_tuning = atms["mask_height"] & atms["mask_hc_no_lc"]
@@ -1298,8 +1293,10 @@ def plot_model_output_arts_reduced(
         s=0.1,
         color="grey",
     )
-    ax1.plot(result["T_hc"], color="red", linestyle="-", label="Mean")
-    ax1.set_ylabel("Cloud Top Temperature / K")
+    ax1.plot(result["T_hc"], color="red", linestyle="--", label=r"$T_{\mathrm{hc}}(I)$")
+    ax1.set_ylabel(r"HC Temperature / K")
+    ax1.set_yticks([200, 240])
+    ax1.legend()
 
     # emissivity
     ax2 = fig.add_subplot(2, 3, 2)
@@ -1314,7 +1311,7 @@ def plot_model_output_arts_reduced(
 
     # alpha
     ax3 = fig.add_subplot(2, 3, 3)
-    sc_alpha = ax3.scatter(
+    ax3.scatter(
         cut_data(atms["IWP"], mask_tuning),
         cut_data(sw_vars["high_cloud_albedo"], mask_tuning),
         s=0.1,
@@ -1340,11 +1337,11 @@ def plot_model_output_arts_reduced(
     ax6 = fig.add_subplot(2, 3, 5)
     colors = ["black", "grey", "blue"]
     cmap = LinearSegmentedColormap.from_list("my_cmap", colors)
-    sc_at = ax6.scatter(
+    ax6.scatter(
         cut_data(atms["IWP"], atms["mask_height"]),
         cut_data_mixed(
-            fluxes_3d_noice["albedo_clearsky"],
-            fluxes_3d_noice["albedo_allsky"],
+            sw_vars["clearsky_albedo"],
+            sw_vars["allsky_albedo"],
             atms["mask_height"],
             atms["connected"],
         ),
@@ -1355,14 +1352,14 @@ def plot_model_output_arts_reduced(
         norm=LogNorm(vmin=1e-6, vmax=1e0),
         s=0.1,
     )
-    ax6.axhline(cs_consts["a_t"], color="k", linestyle="--", label="Clearsky")
-    ax6.axhline(lc_consts["a_t"], color="navy", linestyle="--", label="Low Cloud")
+    ax6.axhline(parameters["a_cs"], color="k", linestyle="--", label="Clearsky")
+    ax6.axhline(parameters["a_l"], color="navy", linestyle="--", label="Low Cloud")
     ax6.plot(result["alpha_t"], color="red", linestyle="-", label="Superposition")
     ax6.set_ylabel("Lower Trop. Albedo")
 
     # R_t
     ax5 = fig.add_subplot(2, 3, 6)
-    sc_rt = ax5.scatter(
+    ax5.scatter(
         cut_data(atms["IWP"], atms["mask_height"]),
         cut_data_mixed(
             fluxes_3d_noice["clearsky_lw_up"].isel(pressure=-1),
@@ -1377,8 +1374,8 @@ def plot_model_output_arts_reduced(
         norm=LogNorm(vmin=1e-6, vmax=1e0),
         s=0.1,
     )
-    ax5.axhline(cs_consts["R_t"], color="k", linestyle="--", label="Clearsky")
-    ax5.axhline(lc_consts["R_t"], color="navy", linestyle="--", label="Low Cloud")
+    ax5.axhline(parameters["R_cs"], color="k", linestyle="--", label="Clearsky")
+    ax5.axhline(parameters["R_l"], color="navy", linestyle="--", label="Low Cloud")
     ax5.plot(
         result["R_t"], color="red", linestyle="-", label=r"Superposition + $C_{\mathrm{H_2O}}$"
     )

@@ -6,16 +6,17 @@ import xarray as xr
 from src.read_data import load_cre
 
 # %% load data
-cre_binned, cre_interpolated, cre_interpolated_average = load_cre()
-ds = xr.open_dataset(
-    "/work/bm1183/m301049/nextgems_profiles/cycle3/interp_representative_sample.nc"
-)
-ds_monsoon = xr.open_dataset("/work/bm1183/m301049/nextgems_profiles/monsoon/raw_data_converted.nc")
+cre_binned, cre_mean = load_cre()
+ds = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/interp_cf.nc")
+ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
+result = pd.read_pickle("/work/bm1183/m301049/iwp_framework/mons/model_output/prefinal.pkl")
 
 # %% bin by IWP and average
-IWP_bins = np.logspace(-6, 2, 70)
-IWP_points = (IWP_bins[:-1] + np.diff(IWP_bins)) / 2
-ds_binned = ds.groupby_bins("IWP", IWP_bins).mean(["stacked_time_cell"])
+IWP_bins_cf = np.logspace(-5, np.log10(30), 50)
+IWP_bins_cre = np.logspace(-5, 1, 50)
+IWP_points_cf = (IWP_bins_cf[:-1] + np.diff(IWP_bins_cf)) / 2
+IWP_points_cre = (IWP_bins_cre[:-1] + np.diff(IWP_bins_cre)) / 2
+ds_binned = ds.groupby_bins("IWP", IWP_bins_cf).mean()
 
 # %% find the two model levels closest to temperature and interpolate the pressure_lev coordinate between them
 temps = [273.15]
@@ -56,13 +57,13 @@ fig, axes = plt.subplots(2, 1, figsize=(8, 7), height_ratios=[2, 1], sharex=True
 
 # plot cloud fraction
 cf = axes[0].contourf(
-    IWP_points,
+    IWP_points_cf,
     ds.pressure_lev / 100,
     ds_binned["cf"].T,
     cmap="Blues",
     levels=np.arange(0.1, 1.1, 0.1),
 )
-axes[0].plot(IWP_points, levels[273.15].values / 100, color="grey", linestyle="--")
+axes[0].plot(IWP_points_cf, levels[273.15].values / 100, color="grey", linestyle="--")
 axes[0].text(2e-6, 590, "0°C", color="grey", fontsize=11)
 axes[0].invert_yaxis()
 axes[0].set_ylabel("Pressure / hPa")
@@ -70,24 +71,24 @@ axes[0].set_ylabel("Pressure / hPa")
 # plot CRE
 axes[1].axhline(0, color="grey", linestyle="--")
 axes[1].plot(
-    cre_interpolated_average.IWP,
-    cre_interpolated_average["connected_sw"],
+    cre_mean.IWP,
+    cre_mean["connected_sw"],
     label="SW",
     color="blue",
 )
 axes[1].plot(
-    cre_interpolated_average.IWP,
-    cre_interpolated_average["connected_lw"],
+    cre_mean.IWP,
+    cre_mean["connected_lw"],
     label="LW",
     color="red",
 )
 axes[1].plot(
-    cre_interpolated_average.IWP,
-    cre_interpolated_average["connected_net"],
+    cre_mean.IWP,
+    cre_mean["connected_net"],
     label="Net",
     color="k",
 )
-axes[1].plot(np.linspace(1 - 6, cre_interpolated_average.IWP.min(), 100), np.zeros(100), color="k")
+axes[1].plot(np.linspace(1 - 6, cre_mean.IWP.min(), 100), np.zeros(100), color="k")
 axes[1].set_ylabel("HCRE / W m$^{-2}$")
 axes[1].set_xlabel("Ice Water Path / kg m$^{-2}$")
 
@@ -112,7 +113,7 @@ for ax in axes:
     ax.set_xticks([1e1, 1e0, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5])
     ax.set_xscale("log")
 
-fig.savefig("plots/paper/cloud_profile.png", dpi=500, bbox_inches="tight")
+fig.savefig("plots/presentation/cloud_profile.png", dpi=500, bbox_inches="tight")
 
 
 # %%

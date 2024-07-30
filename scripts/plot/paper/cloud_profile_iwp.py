@@ -17,6 +17,7 @@ def control_plot(ax):
 cre_binned, cre_mean = load_cre()
 ds = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/interp_cf.nc")
 ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
+result = pd.read_pickle("/work/bm1183/m301049/iwp_framework/mons/model_output/prefinal.pkl")
 
 # %% bin by IWP and average
 IWP_bins_cf = np.logspace(-5, np.log10(30), 50)
@@ -201,6 +202,10 @@ axes[0].plot(
     color="k",
     linestyle="--",
 )
+axes[0].plot(result.index, result["SW_cre"], color="blue")
+axes[0].plot(result.index, result["LW_cre"], color="red")
+axes[0].plot(result.index, result["SW_cre"] + result["LW_cre"], color="black")
+
 axes[0].plot(np.linspace(1 - 6, cre_mean.IWP.min(), 100), np.zeros(100), color="k")
 axes[0].plot([], [], color="grey", linestyle="--", label="ARTS")
 axes[0].plot([], [], color="grey", linestyle="-", label="Concept")
@@ -219,6 +224,6 @@ for ax in axes:
 handles, labels = axes[0].get_legend_handles_labels()
 fig.legend(labels=labels, handles=handles, bbox_to_anchor=(0.9, -0.02), ncols=5)
 
-# fig.savefig("plots/paper/cre_weighting_talk_without.png", dpi=500, bbox_inches="tight")
+fig.savefig("plots/presentation/cre_weighting.png", dpi=500, bbox_inches="tight")
 
-# %%
+# %% plot just cloud fraction and cre for presentation 
