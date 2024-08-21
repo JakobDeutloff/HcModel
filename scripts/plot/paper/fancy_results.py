@@ -60,6 +60,22 @@ fig, axes = plot_model_output_arts_with_cre(
     cre_average,
 )
 fig.savefig("plots/paper/fancy_results_with_cre.png", dpi=500, bbox_inches="tight")
+
+# %% plot fancy results without cre
+fig, axes = plot_model_output_arts_fancy(
+    result,
+    iwp_bins,
+    atms,
+    fluxes_3d_noice,
+    lw_vars,
+    mean_lw_vars,
+    sw_vars,
+    mean_sw_vars,
+    f_vals,
+    parameters,
+)
+fig.savefig('plots/presentation/fancy_results_no_cre.png', dpi=500, bbox_inches="tight")
+
 # %% plot reduced results
 fig, axes = plot_model_output_arts_reduced(
     result,

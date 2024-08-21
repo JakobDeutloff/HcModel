@@ -927,7 +927,6 @@ def plot_model_output_icon_with_cre(
     mean_hc_albedo,
     mean_alpha_t,
     low_trop_vars,
-    
     params,
     cre,
     ):
@@ -1104,45 +1103,47 @@ def plot_model_output_arts_fancy(
     atms,
     fluxes_3d_noice,
     lw_vars,
+    mean_lw_vars,
     sw_vars,
-    lw_binned_vars,
-    sw_binned_vars,
+    mean_sw_vars,
     f_lc_vals,
-    lc_consts,
-    cs_consts,
+    params,
 ):
-    fig = plt.figure(figsize=(15, 9))
+    fig = plt.figure(figsize=(17, 7))
     mask_tuning = atms["mask_height"] & atms["mask_hc_no_lc"]
     IWP_points = (IWP_bins[1:] + IWP_bins[:-1]) / 2
 
-    # hc temperature
-    ax1 = fig.add_subplot(3, 3, 1)
+   
+      # hc temperature
+    ax1 = fig.add_subplot(2, 3, 1)
     ax1.scatter(
         cut_data(atms["IWP"], atms["mask_height"]),
         cut_data(atms["hc_top_temperature"], atms["mask_height"]),
         s=0.1,
         color="grey",
     )
-    ax1.plot(result["T_hc"], color="red", linestyle="--", label="Mean")
-    ax1.set_ylabel(r"$\mathrm{T_{h}}$ / K")
+    ax1.plot(result["T_hc"], color="red", linestyle="--", label=r"$T_{\mathrm{hc}}(I)$")
+    ax1.set_ylabel(r"HC Temperature / K")
+    ax1.set_yticks([200, 240])
     ax1.legend()
 
     # emissivity
-    ax2 = fig.add_subplot(3, 3, 2)
+    ax2 = fig.add_subplot(2, 3, 2)
     ax2.scatter(
         cut_data(atms["IWP"], mask_tuning),
         cut_data(lw_vars["high_cloud_emissivity"], mask_tuning),
         s=0.1,
         color="grey",
     )
-    ax2.plot(lw_binned_vars["binned_emissivity"], color="orange", label="Mean")
-    ax2.plot(result["em_hc"], color="red", label="Fitted Logistic", linestyle="--")
-    ax2.set_ylabel(r"$\epsilon$")
+
+    ax2.plot(mean_lw_vars['binned_emissivity'], color="orange", label="Mean")
+    ax2.plot(result["em_hc"], color="red", label=r"$\varepsilon_{\mathrm{hc}}(I)$", linestyle="--")
+    ax2.set_ylabel(r"HC Emissivity")
+    ax2.set_yticks([0, 1])
     ax2.legend()
 
     # alpha
-    ax3 = fig.add_subplot(3, 3, 3)
-
+    ax3 = fig.add_subplot(2, 3, 3)
     sc_alpha = ax3.scatter(
         cut_data(atms["IWP"], mask_tuning),
         cut_data(sw_vars["high_cloud_albedo"], mask_tuning),
@@ -1150,33 +1151,40 @@ def plot_model_output_arts_fancy(
         c=cut_data(fluxes_3d_noice["allsky_sw_down"].isel(pressure=-1), mask_tuning),
         cmap="viridis",
     )
-    ax3.plot(sw_binned_vars["interpolated_albedo"], color="orange", label="Mean")
-    ax3.plot(result["alpha_hc"], color="red", linestyle="--", label="Fitted Logistic")
-    ax3.set_ylabel(r"$\alpha$")
+    ax3.plot(mean_sw_vars["interpolated_albedo"], color="orange", label="Mean")
+    ax3.plot(result["alpha_hc"], color="red", linestyle="--", label=r"$\alpha_{\mathrm{hc}}(I)$")
+    ax3.set_ylabel(r"HC Albedo")
     ax3.legend()
+    ax3.set_yticks([0, 0.8])
 
     # lc fraction
-    ax4 = fig.add_subplot(3, 3, 4)
-    ax4.plot(IWP_points, f_lc_vals["raw"], label="Raw", color="grey")
+    ax4 = fig.add_subplot(2, 3, 4)
+    ax4.plot(IWP_points, f_lc_vals["raw"], label=r"LWP > $10^{-4} ~ \mathrm{kg ~ m^{-2}}$", color="grey")
     ax4.plot(
-        IWP_points, f_lc_vals["unconnected"], label="Unconnected", color="purple", linestyle="--"
+        IWP_points,
+        f_lc_vals["unconnected"],
+        label=r"$f_{\mathrm{lc}}(I)$",
+        color="purple",
+        linestyle="--",
     )
     ax4.plot(
         result["lc_fraction"],
         color="red",
         linestyle="--",
-        label="Constant",
+        label=r"$f_{\mathrm{lc}}$",
     )
     ax4.legend()
-    ax4.set_ylabel(r"$f$")
+    ax4.set_ylabel(r"Low-Cloud Fraction")
+    ax4.set_yticks([0, 0.5, 1])
 
     # R_t
-    ax5 = fig.add_subplot(3, 3, 5)
+    ax5 = fig.add_subplot(2, 3, 5)
     colors = ["black", "grey", "blue"]
     cmap = LinearSegmentedColormap.from_list("my_cmap", colors)
     sc_rt = ax5.scatter(
         cut_data(atms["IWP"], atms["mask_height"]),
-        cut_data_mixed(
+        (-1)
+        * cut_data_mixed(
             fluxes_3d_noice["clearsky_lw_up"].isel(pressure=-1),
             fluxes_3d_noice["allsky_lw_up"].isel(pressure=-1),
             atms["mask_height"],
@@ -1198,24 +1206,23 @@ def plot_model_output_arts_fancy(
         )
         .groupby_bins(cut_data(atms["IWP"], atms["mask_height"]), bins=IWP_bins)
         .mean()
-    )
+    ) * (-1)
     ax5.plot(IWP_points, mean_rt, color="orange", label="Mean")
-    ax5.axhline(cs_consts["R_t"], color="grey", linestyle="--", label="Clearsky")
-    ax5.axhline(lc_consts["R_t"], color="navy", linestyle="--", label="Low Cloud")
-    ax5.plot(
-        result["R_t"], color="red", linestyle="--", label=r"Superposition + $C_{\mathrm{H_2O}}$"
-    )
-    ax5.set_ylabel(r"$\mathrm{R_t}$ / $\mathrm{W ~ m^{-2}}$")
+    ax5.axhline(-params["R_cs"], color="black", linestyle="--", label=r"$R_{\mathrm{cs}}$")
+    ax5.axhline(-params["R_l"], color="navy", linestyle="--", label=r"$R_{\mathrm{lc}}$")
+    ax5.plot(-result["R_t"], color="red", linestyle="--", label=r"$R_{\mathrm{t}}(I)$")
+    ax5.set_ylabel(r"LT LW Emissions / $\mathrm{W ~ m^{-2}}$")
     ax5.legend()
-    ax5.set_ylim(-350, -200)
+    ax5.set_ylim(200, 350)
+    ax5.set_yticks([225, 275, 325])
 
     # a_t
-    ax6 = fig.add_subplot(3, 3, 6)
+    ax6 = fig.add_subplot(2, 3, 6)
     sc_at = ax6.scatter(
         cut_data(atms["IWP"], atms["mask_height"]),
         cut_data_mixed(
-            fluxes_3d_noice["albedo_clearsky"],
-            fluxes_3d_noice["albedo_allsky"],
+            sw_vars["clearsky_albedo"],
+            sw_vars["allsky_albedo"],
             atms["mask_height"],
             atms["connected"],
         ),
@@ -1228,8 +1235,8 @@ def plot_model_output_arts_fancy(
     )
     mean_a_t = (
         cut_data_mixed(
-            fluxes_3d_noice["albedo_clearsky"],
-            fluxes_3d_noice["albedo_allsky"],
+            sw_vars["clearsky_albedo"],
+            sw_vars["allsky_albedo"],
             atms["mask_height"],
             atms["connected"],
         )
@@ -1237,11 +1244,12 @@ def plot_model_output_arts_fancy(
         .mean()
     )
     ax6.plot(IWP_points, mean_a_t, color="orange", label="Mean")
-    ax6.axhline(cs_consts["a_t"], color="grey", linestyle="--", label="Clearsky")
-    ax6.axhline(lc_consts["a_t"], color="navy", linestyle="--", label="Low Cloud")
-    ax6.plot(result["alpha_t"], color="red", linestyle="--", label="Superposition")
-    ax6.set_ylabel(r"$\alpha_t$")
+    ax6.axhline(params["a_cs"], color="black", linestyle="--", label=r"$\alpha_{\mathrm{cs}}$")
+    ax6.axhline(params["a_l"], color="navy", linestyle="--", label=r"$\alpha_{\mathrm{lc}}$")
+    ax6.plot(result["alpha_t"], color="red", linestyle="--", label=r"$\alpha_{\mathrm{t}}$")
+    ax6.set_ylabel(r"LT Albedo")
     ax6.legend()
+    ax6.set_yticks([0, 0.8])
 
     axes = [ax1, ax2, ax3, ax4, ax5, ax6]
     for ax in axes:
@@ -1263,13 +1271,12 @@ def plot_model_output_arts_fancy(
 
     # add colorbars
     fig.subplots_adjust(right=0.9)
-    cbar_ax1 = fig.add_axes([0.91, 0.65, 0.01, 0.22])
-    cbar_ax2 = fig.add_axes([0.91, 0.38, 0.01, 0.22])
+    cbar_ax1 = fig.add_axes([0.92, 0.52, 0.01, 0.35])
+    cbar_ax2 = fig.add_axes([0.92, 0.1, 0.01, 0.35])
     fig.colorbar(sc_alpha, cax=cbar_ax1, label="SW Down / W m$^{-2}$")
     fig.colorbar(sc_rt, cax=cbar_ax2, label="LWP / kg m$^{-2}$")
 
     return fig, axes
-
 
 def plot_model_output_arts_reduced(
     result,
