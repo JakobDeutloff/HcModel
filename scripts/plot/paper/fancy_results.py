@@ -8,11 +8,11 @@ from src.read_data import (
     load_mean_derived_vars,
 )
 from src.plot_functions import (
-    plot_model_output_arts_reduced,
+    plot_model_output_arts_reduced_hc,
     plot_model_output_arts_fancy,
     plot_model_output_arts_with_cre,
 )
-import pickle
+import pandas as pd
 import xarray as xr
 from src.hc_model import calc_lc_fraction
 from src.helper_functions import cut_data
@@ -27,8 +27,7 @@ cre_binned, cre_average = load_cre()
 atms_raw = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
 path = "/work/bm1183/m301049/iwp_framework/mons/model_output/"
 run = "prefinal"
-with open(path + run + ".pkl", "rb") as f:
-    result = pickle.load(f)
+result = pd.read_pickle(path + run + ".pkl")
 
 # %% calculate cloud fractions
 iwp_bins = np.logspace(-5, 1, 50)
@@ -77,7 +76,7 @@ fig, axes = plot_model_output_arts_fancy(
 fig.savefig('plots/presentation/fancy_results_no_cre.png', dpi=500, bbox_inches="tight")
 
 # %% plot reduced results
-fig, axes = plot_model_output_arts_reduced(
+fig, axes = plot_model_output_arts_reduced_hc(
     result,
     iwp_bins,
     atms,
@@ -88,7 +87,7 @@ fig, axes = plot_model_output_arts_reduced(
     parameters
 )
 fig.tight_layout()
-fig.savefig("plots/presentation/reduced_results.png", dpi=500, bbox_inches="tight")
+fig.savefig("plots/presentation/reduced_results_hc.png", dpi=500, bbox_inches="tight")
 
 # %% plot CRE Comparison
 fig, ax = plt.subplots(figsize=(6, 4))
@@ -101,14 +100,16 @@ ax.plot(
     color="black",
     linestyle="--",
 )
-#ax.plot(result.index, result["SW_cre"], color="blue")
-#ax.plot(result.index, result["LW_cre"], color="red")
-#ax.plot(result.index, result["SW_cre"] + result["LW_cre"], color="black")
+ax.plot(result.index, result["SW_cre"], color="blue")
+ax.plot(result.index, result["LW_cre"], color="red")
+ax.plot(result.index, result["SW_cre"] + result["LW_cre"], color="black")
 ax.set_xscale("log")
-ax.set_xlim(1e-5, 1)
-ax.set_xlabel("IWP / kg m$^{-2}$")
+ax.set_xlim(1e-5, 10)
+ax.set_yticks([-200, 0, 200])
+ax.set_xlabel("Ice Water Path / kg m$^{-2}$")
 ax.set_ylabel("HCRE / W m$^{-2}$")
 ax.spines[["top", "right"]].set_visible(False)
+ax.axhline(0, color="grey", linestyle="--")
 # make legend with fake handles and labels
 handles = [
     plt.Line2D([0], [0], color="grey", linestyle="--"),
@@ -119,6 +120,6 @@ handles = [
 ]
 labels = ["ARTS", "Conceptual Model", "LW", "SW", "Net"]
 fig.legend(handles, labels, bbox_to_anchor=(0.95, -0.04), ncol=5)
-fig.savefig("plots/presentation/cre_comparison_arts.png", dpi=500, bbox_inches="tight")
+fig.savefig("plots/presentation/cre_comparison.png", dpi=500, bbox_inches="tight")
 
 # %%

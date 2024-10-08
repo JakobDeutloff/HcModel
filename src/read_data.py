@@ -1,6 +1,6 @@
 # %% import
 import xarray as xr
-import pickle
+import pandas as pd
 
 
 # %% load data
@@ -81,13 +81,9 @@ def load_mean_derived_vars():
     """
 
     path = "/work/bm1183/m301049/iwp_framework/mons/data/"
-    with open(path + "lw_vars_mean.pkl", "rb") as f:
-        lw_vars = pickle.load(f)
-    with open(path + "sw_vars_mean.pkl", "rb") as f:
-        sw_vars = pickle.load(f)
-    with open(path + "lower_trop_vars_mean.pkl", "rb") as f:
-        lc_vars = pickle.load(f)
-    return lw_vars, sw_vars, lc_vars
+    lw_vars = pd.read_pickle(path + "lw_vars_mean.pkl")
+    sw_vars = pd.read_pickle(path + "sw_vars_mean.pkl")
+    lc_vars = pd.read_pickle(path + "lower_trop_vars_mean.pkl")
     return lw_vars, sw_vars, lc_vars
 
 def load_parameters(experiment='mons'):
@@ -103,14 +99,10 @@ def load_parameters(experiment='mons'):
     """
 
     path = f"/work/bm1183/m301049/iwp_framework/{experiment}/parameters/"
-    with open(path + "hc_albedo_params.pkl", "rb") as f:
-        hc_albedo = pickle.load(f)
-    with open(path + "hc_emissivity_params.pkl", "rb") as f:
-        hc_emissivity = pickle.load(f)
-    with open(path + "C_h2o_params.pkl", "rb") as f:
-        c_h2o = pickle.load(f)
-    with open(path + "lower_trop_params.pkl", "rb") as f:
-        lower_trop_params = pickle.load(f)
+    hc_albedo = pd.read_pickle(path + "hc_albedo_params.pkl")
+    hc_emissivity = pd.read_pickle(path + "hc_emissivity_params.pkl")
+    c_h2o = pd.read_pickle(path + "C_h2o_params.pkl")
+    lower_trop_params = pd.read_pickle(path + "lower_trop_params.pkl")
 
     return {
         "alpha_hc": hc_albedo,

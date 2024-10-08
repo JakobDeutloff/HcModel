@@ -1109,7 +1109,7 @@ def plot_model_output_arts_fancy(
     f_lc_vals,
     params,
 ):
-    fig = plt.figure(figsize=(17, 7))
+    fig = plt.figure(figsize=(14, 7))
     mask_tuning = atms["mask_height"] & atms["mask_hc_no_lc"]
     IWP_points = (IWP_bins[1:] + IWP_bins[:-1]) / 2
 
@@ -1288,7 +1288,7 @@ def plot_model_output_arts_reduced(
     f_lc_vals,
     parameters,
 ):
-    fig = plt.figure(figsize=(12, 5))
+    fig = plt.figure(figsize=(12, 7))
     mask_tuning = atms["mask_height"] & atms["mask_hc_no_lc"]
     IWP_points = (IWP_bins[1:] + IWP_bins[:-1]) / 2
 
@@ -1300,10 +1300,9 @@ def plot_model_output_arts_reduced(
         s=0.1,
         color="grey",
     )
-    ax1.plot(result["T_hc"], color="red", linestyle="--", label=r"$T_{\mathrm{hc}}(I)$")
+    ax1.plot(result["T_hc"], color="red", linestyle="-")
     ax1.set_ylabel(r"HC Temperature / K")
     ax1.set_yticks([200, 240])
-    ax1.legend()
 
     # emissivity
     ax2 = fig.add_subplot(2, 3, 2)
@@ -1315,6 +1314,7 @@ def plot_model_output_arts_reduced(
     )
     ax2.plot(result["em_hc"], color="red", label="Fitted Logistic", linestyle="-")
     ax2.set_ylabel("Emissivity")
+    ax2.set_yticks([0, 1])
 
     # alpha
     ax3 = fig.add_subplot(2, 3, 3)
@@ -1326,6 +1326,8 @@ def plot_model_output_arts_reduced(
     )
     ax3.plot(result["alpha_hc"], color="red", linestyle="-", label="Fitted Logistic")
     ax3.set_ylabel("Albedo")
+    ax3.set_yticks([0, 0.8])
+    ax3.set_ylim(0, 1)
 
     # lc fraction
     ax4 = fig.add_subplot(2, 3, 4)
@@ -1417,5 +1419,76 @@ def plot_model_output_arts_reduced(
     ]
     labels = ["Model Input", "Raw Data", "Clearsky", "Low Cloud"]
     fig.legend(handles, labels, bbox_to_anchor=(0.75, -0.02), ncol=4)
+
+    return fig, axes
+
+def plot_model_output_arts_reduced_hc(
+    result,
+    IWP_bins,
+    atms,
+    fluxes_3d_noice,
+    lw_vars,
+    sw_vars,
+    f_lc_vals,
+    parameters,
+):
+    fig = plt.figure(figsize=(12, 4))
+    mask_tuning = atms["mask_height"] & atms["mask_hc_no_lc"]
+    IWP_points = (IWP_bins[1:] + IWP_bins[:-1]) / 2
+
+    # hc temperature
+    ax1 = fig.add_subplot(1, 3, 1)
+    ax1.scatter(
+        cut_data(atms["IWP"], atms["mask_height"]),
+        cut_data(atms["hc_top_temperature"], atms["mask_height"]),
+        s=0.1,
+        color="grey",
+    )
+    ax1.plot(result["T_hc"], color="red", linestyle="-")
+    ax1.set_ylabel(r"HC Temperature / K")
+    ax1.set_yticks([200, 240])
+
+    # emissivity
+    ax2 = fig.add_subplot(1, 3, 2)
+    ax2.scatter(
+        cut_data(atms["IWP"], mask_tuning),
+        cut_data(lw_vars["high_cloud_emissivity"], mask_tuning),
+        s=0.1,
+        color="grey",
+    )
+    ax2.plot(result["em_hc"], color="red", label="Fitted Logistic", linestyle="-")
+    ax2.set_ylabel("Emissivity")
+    ax2.set_yticks([0, 1])
+
+    # alpha
+    ax3 = fig.add_subplot(1, 3, 3)
+    ax3.scatter(
+        cut_data(atms["IWP"], mask_tuning),
+        cut_data(sw_vars["high_cloud_albedo"], mask_tuning),
+        s=0.1,
+        color="grey",
+        label="Raw Data",
+    )
+    ax3.plot(result["alpha_hc"], color="red", linestyle="-", label="Model Input")
+    ax3.set_ylabel("Albedo")
+    ax3.set_yticks([0, 0.8])
+    ax3.set_ylim(0, 1)
+
+
+    axes = [ax1, ax2, ax3]
+    for ax in axes:
+        ax.set_xscale("log")
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.set_title("")
+        ax.set_xlabel("Ice Water Path / kg m$^{-2}$")
+        ax.set_xticks([1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1e0, 1e1])
+        ax.set_xticklabels("")
+        ax.set_xlim(1e-5, 10)
+        ax.set_xticklabels(["1e-5", "1e-4", "1e-3", "1e-2", "1e-1", "1e0", "1e1"])
+
+    # add legend
+    handles, labels = ax3.get_legend_handles_labels()
+    fig.legend(handles, labels, bbox_to_anchor=(0.65, -0.02), ncol=4)
 
     return fig, axes

@@ -75,7 +75,7 @@ fig, axes = plt.subplots(4, 1, figsize=(10, 10), height_ratios=[3, 2, 1, 1], sha
 cf = axes[0].contourf(
     IWP_points_cf,
     ds.pressure_lev / 100,
-    ds_binned["cf"].T,
+    ds_binned["cf"],
     cmap="Blues",
     levels=np.arange(0.1, 1.1, 0.1),
 )
@@ -109,7 +109,7 @@ axes[1].plot(
     linestyle="-",
 )
 axes[1].plot(
-    np.linspace(1 - 6, cre_mean.IWP.min(), 100),
+    np.linspace(1 - 6, int(cre_mean.IWP.min()), 100),
     np.ones(100) * cre_mean["connected_net"][0].values,
     color="k",
 )
@@ -161,7 +161,7 @@ for ax in axes:
     )
 
 axes[3].set_xlabel("$I$ / kg m$^{-2}$")
-fig.savefig("plots/paper/cloud_profile_iwp_mons.png", dpi=500, bbox_inches="tight")
+# fig.savefig("plots/paper/cloud_profile_iwp_mons.png", dpi=500, bbox_inches="tight")
 
 # %% calculate numbers for text
 
@@ -176,54 +176,72 @@ print(f"Max IWP distribution: {iwp_max_hist}")
 net_hcre_max_hist = cre_mean["connected_net"][hist.argmax()].values
 print(f"Net HCRE at max IWP distribution: {net_hcre_max_hist}")
 
-# %% plot just CRE and IWP dist for poster
-fig, axes = plt.subplots(2, 1, figsize=(6, 5), sharex=True, gridspec_kw={"height_ratios": [2, 1]})
+# %% plot just high cloud fraction and CRE for poster
+fig, axes = plt.subplots(2, 1, figsize=(8, 6), height_ratios=[2, 1], sharex=True)
 
-# CRE
-axes[0].axhline(0, color="grey", linestyle="--")
-axes[0].plot(
+# plot cloud fraction
+cf = axes[0].contourf(
+    IWP_points_cf,
+    ds.pressure_lev / 100,
+    ds_binned["cf"],
+    cmap="Blues",
+    levels=np.arange(0.1, 1.1, 0.1),
+)
+axes[0].plot(IWP_points_cf, levels[273.15].values / 100, color="grey", linestyle="--")
+axes[0].text(2e-5, 560, "0°C", color="grey", fontsize=11)
+axes[0].invert_yaxis()
+axes[0].set_ylabel("Pressure / hPa")
+axes[0].set_yticks([1000, 600, 200])
+
+# plot CRE
+axes[1].axhline(0, color="grey", linestyle="--")
+axes[1].plot(
     cre_mean.IWP,
     cre_mean["connected_sw"],
     label="SW",
     color="blue",
-    linestyle="--",
+    linestyle="-",
 )
-axes[0].plot(
+axes[1].plot(
     cre_mean.IWP,
     cre_mean["connected_lw"],
     label="LW",
     color="red",
-    linestyle="--",
+    linestyle="-",
 )
-axes[0].plot(
+axes[1].plot(
     cre_mean.IWP,
     cre_mean["connected_net"],
-    label="Net",
+    label="net",
     color="k",
-    linestyle="--",
+    linestyle="-",
 )
-axes[0].plot(result.index, result["SW_cre"], color="blue")
-axes[0].plot(result.index, result["LW_cre"], color="red")
-axes[0].plot(result.index, result["SW_cre"] + result["LW_cre"], color="black")
 
-axes[0].plot(np.linspace(1 - 6, cre_mean.IWP.min(), 100), np.zeros(100), color="k")
-axes[0].plot([], [], color="grey", linestyle="--", label="ARTS")
-axes[0].plot([], [], color="grey", linestyle="-", label="Concept")
-axes[0].set_ylabel("HCRE / W m$^{-2}$")
+axes[1].set_ylabel("HCRE / W m$^{-2}$")
+axes[1].set_yticks([-200, 0, 200])
+axes[1].set_ylim([-280, 200])
 
-# IWP dist
-axes[1].stairs(hist, edges, label="IWP", color="black")
-axes[1].set_xscale("log")
-axes[1].set_ylabel("P")
-axes[1].set_xlabel("Ice Water Path / kgm$^{-2}$")
 
 for ax in axes:
-    control_plot(ax)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.set_xlim(1e-5, 10)
+    ax.set_xticks([1e1, 1e0, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5])
+    ax.set_xscale("log")
 
-# add legend
-handles, labels = axes[0].get_legend_handles_labels()
-fig.legend(labels=labels, handles=handles, bbox_to_anchor=(0.9, -0.02), ncols=5)
+# add colorbar
+fig.subplots_adjust(right=0.8)
+cax = fig.add_axes([0.84, 0.41, 0.02, 0.48])
+cb = fig.colorbar(cf, cax=cax, label="Cloud Cover")
+cb.set_ticks([0.1, 0.4, 0.7, 1])
 
-fig.savefig("plots/presentation/cre_weighting.png", dpi=500, bbox_inches="tight")
-
-# %% plot just cloud fraction and cre for presentation 
+# add legend for axes[1]
+handles, labels = axes[1].get_legend_handles_labels()
+fig.legend(
+    labels=labels,
+    handles=handles,
+    bbox_to_anchor=(0.9, 0.31),
+    frameon=False,
+)
+axes[1].set_xlabel("Ice Water Path / kg m$^{-2}$")
+fig.savefig("plots/presentation/cloud_profile_iwp_mons.png", dpi=500, bbox_inches="tight")
+# %%
