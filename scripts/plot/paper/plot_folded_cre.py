@@ -2,16 +2,15 @@
 import matplotlib.pyplot as plt
 import xarray as xr
 import numpy as np
-import pickle
+import pandas as pd
 from src.read_data import load_cre
 
 # %% load data
 ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
 cre, cre_mean = load_cre()
 path = "/work/bm1183/m301049/iwp_framework/mons/model_output/"
-run = "prefinal"
-with open(path + run + ".pkl", "rb") as f:
-    result = pickle.load(f)
+run = "prefinal_2"
+result = pd.read_pickle(path + run + ".pkl")
 
 # %% multiply hist with cre result
 IWP_bins = np.logspace(-5, 1, num=50)

@@ -4,15 +4,13 @@ import matplotlib.pyplot as plt
 from src.read_data import load_cre
 import pandas as pd
 import xarray as xr
-import pickle
 
 # %% load data
 cre_binned, cre_mean = load_cre()
 ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
 path = "/work/bm1183/m301049/iwp_framework/mons/model_output/"
-run = "prefinal"
-with open(path + run + ".pkl", "rb") as f:
-    result = pickle.load(f)
+run = "prefinal_2"
+result = pd.read_pickle(path + run + ".pkl")
 
 # %% plot mean CRE vs IWP
 IWP_points = cre_mean["IWP"]

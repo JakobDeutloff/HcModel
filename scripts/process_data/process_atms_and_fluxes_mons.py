@@ -16,9 +16,9 @@ convention = "arts"
 # %%
 # path = "/work/bm1183/m301049/nextgems_profiles/cycle3/sample_3/"
 path = "/work/bm1183/m301049/iwp_framework/mons/raw_data/"
-run_allksy = "fullrange_flux_mid1deg/"
-run_noice = "fullrange_flux_mid1deg_noice/"
-sample = xr.open_dataset(path + run_allksy + "atms.nc")
+run_allksy = "flux_monsun_Nf10000_1deg/"
+run_noice = "flux_monsun_Nf10000_1deg_nofrozen/"
+sample = xr.open_dataset(path + "fullrange_flux_mid1deg/" + "atms.nc")
 fluxes_allsky = xr.open_dataset(path + run_allksy + "fluxes_3d.nc")
 fluxes_noice = xr.open_dataset(path + run_noice + "fluxes_3d.nc")
 

@@ -26,7 +26,7 @@ parameters = load_parameters()
 cre_binned, cre_average = load_cre()
 atms_raw = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
 path = "/work/bm1183/m301049/iwp_framework/mons/model_output/"
-run = "prefinal"
+run = "prefinal_2"
 result = pd.read_pickle(path + run + ".pkl")
 
 # %% calculate cloud fractions

@@ -17,7 +17,7 @@ def control_plot(ax):
 cre_binned, cre_mean = load_cre()
 ds = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/interp_cf.nc")
 ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
-result = pd.read_pickle("/work/bm1183/m301049/iwp_framework/mons/model_output/prefinal.pkl")
+result = pd.read_pickle("/work/bm1183/m301049/iwp_framework/mons/model_output/prefinal_2.pkl")
 
 # %% bin by IWP and average
 IWP_bins_cf = np.logspace(-5, np.log10(30), 50)
@@ -161,7 +161,7 @@ for ax in axes:
     )
 
 axes[3].set_xlabel("$I$ / kg m$^{-2}$")
-# fig.savefig("plots/paper/cloud_profile_iwp_mons.png", dpi=500, bbox_inches="tight")
+fig.savefig("plots/paper/cloud_profile_iwp_mons.png", dpi=500, bbox_inches="tight")
 
 # %% calculate numbers for text
 

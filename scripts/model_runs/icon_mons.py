@@ -35,7 +35,7 @@ result = run_model(
 )
 # %% save result 
 path = '/work/bm1183/m301049/iwp_framework/mons/model_output/'
-os.remove(path + 'prefinal.pkl')
-with open(path + 'prefinal.pkl', 'wb') as f:
+os.remove(path + 'prefinal_2.pkl')
+with open(path + 'prefinal_2.pkl', 'wb') as f:
     pickle.dump(result, f)
 # %%
