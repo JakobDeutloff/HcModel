@@ -38,6 +38,11 @@ for key, result in ensemble.items():
     sum_cre_ensemble.loc[float(key)]['LW'] = sum_cre(result, sample, IWP_bins)['LW']
     sum_cre_ensemble.loc[float(key)]['net'] = sum_cre(result, sample, IWP_bins)['net']
 
+# %% calculate slopes
+res_net = linregress(sum_cre_ensemble.index, list(sum_cre_ensemble['net'].values))
+res_sw = linregress(sum_cre_ensemble.index, list(sum_cre_ensemble['SW'].values))
+res_lw = linregress(sum_cre_ensemble.index, list(sum_cre_ensemble['LW'].values))
+
 # %% plot sum_cre
 fig, ax = plt.subplots(figsize=(5, 4))
 ax.plot(sum_cre_ensemble.index, sum_cre_ensemble['SW'], label='SW', color='blue')
@@ -52,11 +57,15 @@ tick_labels = ax.get_xticklabels()
 tick_labels[1].set_fontweight('bold')
 ax.set_yticks([-20, 0, 20])
 fig.legend(handles=ax.lines, labels=['SW', 'LW', 'Net'], loc='upper right', bbox_to_anchor=(0.75, -0.01), ncols=3)
+ax.text(0.8, 0.6, f'{res_net.slope:.2f} W m$^{{-2}}$', transform=ax.transAxes, color='black')
+ax.text(0.8, 0.18, f'{res_sw.slope:.2f} W m$^{{-2}}$', transform=ax.transAxes, color='blue')
+ax.text(0.8, 0.95, f'{res_lw.slope:.2f} W m$^{{-2}}$', transform=ax.transAxes, color='red')
 fig.savefig('plots/paper/lc_sensitivity.png', dpi=500, bbox_inches='tight')
 
 
 # %% numbers for lc fraction increase 
 increase = (sum_cre_ensemble.loc[0.32]['net'] - sum_cre_ensemble.loc[0.16]['net']) / sum_cre_ensemble.loc[0.16]['net'] * 100
 print(f'Net HCRE increase for doubling of f: {increase:.2f}%')
+
 
 # %%
