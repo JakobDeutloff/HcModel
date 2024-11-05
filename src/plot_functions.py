@@ -582,7 +582,7 @@ def plot_num_connected(sample, ax, min, max, mask):
     n_profiles = (~np.isnan(connected) * 1).sum().values
     connected_profiles = connected.sum().values
 
-    ax.text(0.05, 0.8, f"$I$-Bin : {min:.0e} - {max:.0e}", transform=ax.transAxes)
+    ax.text(0.05, 0.8, f"$I$-Bin : {min:.0e} - {max:.0e}" + " / kg m$^{-2}$", transform=ax.transAxes)
     ax.text(0.05, 0.675, f"Number of Profiles: {n_profiles:.0f}", transform=ax.transAxes)
     ax.text(
         0.05,
@@ -746,9 +746,9 @@ def plot_model_output_arts_with_cre(
     ax3.plot(
         IWP_points,
         f_lc_vals["unconnected"],
-        label=r"$f_{\mathrm{lc}}(I)$",
-        color="purple",
-        linestyle="--",
+        label="Mean",
+        color="orange",
+        linestyle="-",
     )
     ax3.plot(
         result["lc_fraction"],

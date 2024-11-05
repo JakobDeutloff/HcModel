@@ -278,21 +278,21 @@ ax.plot(cre_mean.IWP, cre_mean["connected_lw"], label="LW CRE", color="red")
 # sokol
 ax.plot(
     sokol_result.fwp / 1e3,
-    sokol_result.ncre.mean("model").sel(SST=300),
+    sokol_result.ncre.mean('model').sel(SST=300),
     color="k",
     linestyle="--",
     label="Sokol",
 )
 ax.plot(
     sokol_result.fwp / 1e3,
-    sokol_result.swcre.mean("model").sel(SST=300),
+    sokol_result.swcre.mean('model').sel(SST=300),
     color="blue",
     linestyle="--",
     label="Sokol",
 )
 ax.plot(
     sokol_result.fwp / 1e3,
-    sokol_result.lwcre.mean("model").sel(SST=300),
+    sokol_result.lwcre.mean('model').sel(SST=300),
     color="red",
     linestyle="--",
     label="Sokol",
