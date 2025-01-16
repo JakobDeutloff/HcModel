@@ -11,7 +11,7 @@ import os
 
 # %% load data
 atms, fluxes_3d, fluxes_3d_noice = load_atms_and_fluxes()
-parameters = load_parameters()
+parameters = load_parameters(experiment='ciwp')
 model_results={}
 
 # %% set mask ans bins 
@@ -34,7 +34,7 @@ result = run_model(
     prescribed_lc_quantities=None
 )
 # %% save result 
-path = '/work/bm1183/m301049/iwp_framework/mons/model_output/'
+path = '/work/bm1183/m301049/iwp_framework/ciwp/model_output/'
 os.remove(path + 'prefinal_2.pkl')
 with open(path + 'prefinal_2.pkl', 'wb') as f:
     pickle.dump(result, f)

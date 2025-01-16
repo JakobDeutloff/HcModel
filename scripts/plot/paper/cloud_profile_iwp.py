@@ -19,8 +19,8 @@ def control_plot(ax):
 # %% load data
 cre_binned, cre_mean = load_cre()
 ds = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/interp_cf.nc")
-ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
-result = pd.read_pickle("/work/bm1183/m301049/iwp_framework/mons/model_output/prefinal_2.pkl")
+ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/ciwp/data/full_snapshot_proc.nc")
+result = pd.read_pickle("/work/bm1183/m301049/iwp_framework/ciwp/model_output/prefinal_2.pkl")
 sokol_result = xr.open_dataset(
     "/work/bm1183/m301049/iwp_framework/blaz_adam/rcemip_iwp-resolved_statistics.nc"
 )
@@ -190,7 +190,7 @@ for ax in axes:
     )
 
 axes[3].set_xlabel("$I$ / kg m$^{-2}$")
-#fig.savefig("plots/paper/cloud_profile_iwp_mons.png", dpi=500, bbox_inches="tight")
+fig.savefig("plots/ciwp/cloud_profile_iwp_mons.png", dpi=500, bbox_inches="tight")
 
 # %% calculate numbers for text
 

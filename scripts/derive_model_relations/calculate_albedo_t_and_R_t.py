@@ -198,9 +198,9 @@ mean_R_cs = float(
 # %% linear regression of R_t vs IWP
 x_data = np.log10(cut_data(atms["IWP"], atms["mask_height"])).values.flatten()
 y_data = cut_data(lower_trop_vars["R_t"], atms["mask_height"]).values.flatten()
-nan_mask = ~np.isnan(x_data) & ~np.isnan(y_data)
-x_data = x_data[nan_mask]
-y_data = y_data[nan_mask]
+finite_mask = np.isfinite(x_data) & np.isfinite(y_data)
+x_data = x_data[finite_mask]
+y_data = y_data[finite_mask]
 y_data = y_data - np.mean(y_data)
 c_h20_coeffs = linregress(x_data, y_data)
 
@@ -259,12 +259,12 @@ binned_lower_trop_vars["R_t"] = (
 )
 
 # %% save variables
-path = "/work/bm1183/m301049/iwp_framework/mons/"
+path = "/work/bm1183/m301049/iwp_framework/ciwp/"
 
-#os.remove(path + "data/lower_trop_vars.nc")
-#os.remove(path + "data/lower_trop_vars_mean.pkl")
-#os.remove(path + "parameters/C_h2o_params.pkl")
-#os.remove(path + "parameters/lower_trop_params.pkl")
+os.remove(path + "data/lower_trop_vars.nc")
+os.remove(path + "data/lower_trop_vars_mean.pkl")
+os.remove(path + "parameters/C_h2o_params.pkl")
+os.remove(path + "parameters/lower_trop_params.pkl")
 
 lower_trop_vars.to_netcdf(path + "data/lower_trop_vars.nc")
 with open(path + "data/lower_trop_vars_mean.pkl", "wb") as f:

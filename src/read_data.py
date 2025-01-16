@@ -40,7 +40,7 @@ def load_cre():
     cre_average : xarray.Dataset
         CRE_interpolated averaged over SW radiation bins."""
 
-    path = "/work/bm1183/m301049/iwp_framework/mons/data/"
+    path = "/work/bm1183/m301049/iwp_framework/ciwp/data/"
     cre_binned = xr.open_dataset(path + "cre_binned.nc")
     cre_average = xr.open_dataset(path + "cre_mean.nc")
     return cre_binned, cre_average
@@ -60,7 +60,7 @@ def load_derived_vars():
         Low cloud variables.
     """
 
-    path = "/work/bm1183/m301049/iwp_framework/mons/data/"
+    path = "/work/bm1183/m301049/iwp_framework/ciwp/data/"
     lw_vars = xr.open_dataset(path + "lw_vars.nc")
     sw_vars = xr.open_dataset(path + "sw_vars.nc")
     lc_vars = xr.open_dataset(path + "lower_trop_vars.nc")
@@ -80,7 +80,7 @@ def load_mean_derived_vars():
         Low cloud variables.
     """
 
-    path = "/work/bm1183/m301049/iwp_framework/mons/data/"
+    path = "/work/bm1183/m301049/iwp_framework/ciwp/data/"
     lw_vars = pd.read_pickle(path + "lw_vars_mean.pkl")
     sw_vars = pd.read_pickle(path + "sw_vars_mean.pkl")
     lc_vars = pd.read_pickle(path + "lower_trop_vars_mean.pkl")

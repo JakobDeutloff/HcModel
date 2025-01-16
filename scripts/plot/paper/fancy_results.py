@@ -22,10 +22,10 @@ import matplotlib.pyplot as plt
 atms, fluxes_3d, fluxes_3d_noice = load_atms_and_fluxes()
 lw_vars, sw_vars, lower_trop_vars = load_derived_vars()
 mean_lw_vars, mean_sw_vars, mean_lc_vars = load_mean_derived_vars()
-parameters = load_parameters()
+parameters = load_parameters(experiment='ciwp')
 cre_binned, cre_average = load_cre()
-atms_raw = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
-path = "/work/bm1183/m301049/iwp_framework/mons/model_output/"
+atms_raw = xr.open_dataset("/work/bm1183/m301049/iwp_framework/ciwp/data/full_snapshot_proc.nc")
+path = "/work/bm1183/m301049/iwp_framework/ciwp/model_output/"
 run = "prefinal_2"
 result = pd.read_pickle(path + run + ".pkl")
 
@@ -58,7 +58,7 @@ fig, axes = plot_model_output_arts_with_cre(
     parameters,
     cre_average,
 )
-fig.savefig("plots/paper/fancy_results_with_cre.png", dpi=500, bbox_inches="tight")
+fig.savefig("plots/ciwp/fancy_results_with_cre.png", dpi=500, bbox_inches="tight")
 
 # %% plot fancy results without cre
 fig, axes = plot_model_output_arts_fancy(
