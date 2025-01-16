@@ -18,9 +18,11 @@ convention = "arts"
 path = "/work/bm1183/m301049/iwp_framework/mons/raw_data/"
 run_allksy = "flux_monsun_Nf10000_1deg/"
 run_noice = "flux_monsun_Nf10000_1deg_nofrozen/"
+run_nosnow = "flux_monsun_Nf10000_1deg_nosnow/"
 sample = xr.open_dataset(path + "fullrange_flux_mid1deg/" + "atms.nc")
 fluxes_allsky = xr.open_dataset(path + run_allksy + "fluxes_3d.nc")
 fluxes_noice = xr.open_dataset(path + run_noice + "fluxes_3d.nc")
+fluxes_nosnow = xr.open_dataset(path + run_nosnow + "fluxes_3d.nc")
 
 # %% rename variables
 if rename:
@@ -58,6 +60,7 @@ sample["mask_low_cloud"] = ((sample["connected"] == 0) & (sample["LWP"] > 1e-4))
 # %% cange flux convention (positive down)
 fluxes_allsky = change_convention(fluxes_allsky)
 fluxes_noice = change_convention(fluxes_noice)
+fluxes_nosnow = change_convention(fluxes_nosnow)
 
 # %% save
 path = "/work/bm1183/m301049/iwp_framework/mons/data/"
@@ -67,5 +70,7 @@ os.remove(path + "fluxes_allsky_proc.nc")
 fluxes_allsky.to_netcdf(path + "fluxes_allsky_proc.nc")
 os.remove(path + "fluxes_noice_proc.nc")
 fluxes_noice.to_netcdf(path + "fluxes_noice_proc.nc")
+os.remove(path + "fluxes_nosnow_proc.nc")
+fluxes_nosnow.to_netcdf(path + "fluxes_nosnow_proc.nc")
 
 # %%

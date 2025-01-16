@@ -4,7 +4,7 @@ import xarray as xr
 
 # %% load data 
 path = '/work/um0878/users/mbrath/StarARTS/results/processed_fluxes'
-run = 'flux_monsun_Nf10000_1deg_nofrozen'
+run = 'flux_monsun_Nf10000_1deg_nosnow'
 results_ref = xr.open_dataset(f"{path}/{run}/fluxes_{run}.nc")
 
 
@@ -46,3 +46,4 @@ fluxes_3d = xr.Dataset(
 # %% save 
 path = '/work/bm1183/m301049/iwp_framework/mons/raw_data/'
 fluxes_3d.to_netcdf(f"{path}/{run}/fluxes_3d.nc")
+# %%

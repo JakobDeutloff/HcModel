@@ -7,7 +7,7 @@ import xarray as xr
 from src.read_data import load_cre
 import matplotlib.ticker as ticker
 import matplotlib
-matplotlib.use('WebAgg')
+#matplotlib.use('WebAgg')
 
 # %%
 def control_plot(ax):
@@ -143,9 +143,11 @@ axes[1].set_ylabel("$C(I)$ / W m$^{-2}$")
 axes[1].set_yticks([-200, 0, 200])
 
 # plot IWP dist
-axes[2].stairs(hist, edges, label="IWP", color="black")
+axes[2].stairs(hist, edges, color="black", label='ICON')
+axes[2].step(sokol_result['fwp']/1e3, sokol_result['f_obs'].sel(product='2C-ICE'), color='green', linestyle='-', label='2C-ICE')
 axes[2].set_ylabel("$P(I)$")
 axes[2].set_yticks([0, 0.02])
+axes[2].legend(frameon=False)
 
 # plot P time C
 P_times_C = hist * cre_mean["connected_net"]
@@ -188,7 +190,7 @@ for ax in axes:
     )
 
 axes[3].set_xlabel("$I$ / kg m$^{-2}$")
-fig.savefig("plots/paper/cloud_profile_iwp_mons.png", dpi=500, bbox_inches="tight")
+#fig.savefig("plots/paper/cloud_profile_iwp_mons.png", dpi=500, bbox_inches="tight")
 
 # %% calculate numbers for text
 
