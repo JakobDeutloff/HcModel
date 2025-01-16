@@ -12,8 +12,6 @@ import os
 
 # %% load freddis data
 atms, fluxes_allsky, fluxes_noice = load_atms_and_fluxes()
-ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
-
 
 # %% initialize dataset for new variables
 lw_vars = xr.Dataset()
@@ -93,7 +91,7 @@ ax.axhline(1, color="grey", linestyle="--")
 ax.legend()
 
 # %% save coefficients as pkl file
-path = "/work/bm1183/m301049/iwp_framework/mons/"
+path = "/work/bm1183/m301049/iwp_framework/ciwp/"
 
 os.remove(path + "data/lw_vars.nc")
 os.remove(path + "parameters/hc_emissivity_params.pkl")

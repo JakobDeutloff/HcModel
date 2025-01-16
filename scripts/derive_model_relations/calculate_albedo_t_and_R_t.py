@@ -15,7 +15,7 @@ from matplotlib.colors import LinearSegmentedColormap, LogNorm
 
 # %% read data
 atms, fluxes_3d, fluxes_3d_noice = load_atms_and_fluxes()
-lw_vars = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/lw_vars.nc")
+lw_vars = xr.open_dataset("/work/bm1183/m301049/iwp_framework/ciwp/data/lw_vars.nc")
 aux = xr.open_dataset(
     "/work/bm1183/m301049/iwp_framework/mons/raw_data/fullrange_flux_mid1deg_noice/aux.nc"
 )
@@ -261,10 +261,10 @@ binned_lower_trop_vars["R_t"] = (
 # %% save variables
 path = "/work/bm1183/m301049/iwp_framework/mons/"
 
-os.remove(path + "data/lower_trop_vars.nc")
-os.remove(path + "data/lower_trop_vars_mean.pkl")
-os.remove(path + "parameters/C_h2o_params.pkl")
-os.remove(path + "parameters/lower_trop_params.pkl")
+#os.remove(path + "data/lower_trop_vars.nc")
+#os.remove(path + "data/lower_trop_vars_mean.pkl")
+#os.remove(path + "parameters/C_h2o_params.pkl")
+#os.remove(path + "parameters/lower_trop_params.pkl")
 
 lower_trop_vars.to_netcdf(path + "data/lower_trop_vars.nc")
 with open(path + "data/lower_trop_vars_mean.pkl", "wb") as f:

@@ -246,7 +246,8 @@ def calc_IWP(atms, convention="icon"):
         cell_height = calc_cell_height(atms)
         vert_coord = "pressure"
 
-    IWP = ((atms["IWC"] + atms["snow"] + atms["graupel"]) * cell_height).sum(vert_coord)
+    #IWP = ((atms["IWC"] + atms["snow"] + atms["graupel"]) * cell_height).sum(vert_coord)
+    IWP = (atms["IWC"] * cell_height).sum(vert_coord)
     IWP.attrs = {"units": "kg m^-2", "long_name": "Ice Water Path"}
     return IWP
 

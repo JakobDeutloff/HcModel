@@ -18,9 +18,9 @@ def load_atms_and_fluxes():
         Fluxes without ice.
     """
 
-    path = "/work/bm1183/m301049/iwp_framework/mons/data/"
+    path = "/work/bm1183/m301049/iwp_framework/ciwp/data/"
     fluxes_noice = xr.open_dataset(path + "fluxes_noice_proc.nc")
-    fluxes_allsky = xr.open_dataset(path + "fluxes_allsky_proc.nc")
+    fluxes_allsky = xr.open_dataset(path + "fluxes_nosnow_proc.nc")
     atms = xr.open_dataset(path + "atms_proc.nc")
     
 

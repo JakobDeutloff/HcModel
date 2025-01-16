@@ -12,7 +12,7 @@ import os
 
 # %% load  data
 atms, fluxes_3d, fluxes_3d_noice = load_atms_and_fluxes()
-lw_vars = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/lw_vars.nc")
+lw_vars = xr.open_dataset("/work/bm1183/m301049/iwp_framework/ciwp/data/lw_vars.nc")
 
 # %% initialize data 
 sw_vars = xr.Dataset()
@@ -157,11 +157,11 @@ ax.legend()
 plt.show()
 
 # %% save coefficients as pkl file
-path = '/work/bm1183/m301049/iwp_framework/mons/'
+path = '/work/bm1183/m301049/iwp_framework/ciwp/'
 
-os.remove(path + 'data/sw_vars.nc')
-os.remove(path + 'parameters/hc_albedo_params.pkl')
-os.remove(path + 'data/sw_vars_mean.pkl')
+#os.remove(path + 'data/sw_vars.nc')
+#os.remove(path + 'parameters/hc_albedo_params.pkl')
+#os.remove(path + 'data/sw_vars_mean.pkl')
 
 sw_vars.to_netcdf(path + "data/sw_vars.nc")
 with open(path + "parameters/hc_albedo_params.pkl", "wb") as f:

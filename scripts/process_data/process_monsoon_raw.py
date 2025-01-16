@@ -25,7 +25,8 @@ def convert_hydrometeor_to_density(ds):
 
 
 def callc_iwp_lwp(ds):
-    ds["IWP"] = ((ds["cli"] + ds["qs"] + ds["qg"]) * ds["dzghalf"]).sum("height")
+    #ds["IWP"] = ((ds["cli"] + ds["qs"] + ds["qg"]) * ds["dzghalf"]).sum("height")
+    ds["IWP"] = ((ds["cli"]) * ds["dzghalf"]).sum("height")
     ds["IWP"].attrs = {"long_name": "Ice Water Path", "units": "kg/m^2"}
     ds["LWP"] = ((ds["clw"] + ds["qr"]) * ds["dzghalf"]).sum("height")
     ds["LWP"].attrs = {"long_name": "Liquid Water Path", "units": "kg/m^2"}
@@ -102,6 +103,6 @@ ds_monsoon["hc_temperature"], ds_monsoon["hc_top_index"] = calculate_h_cloud_tem
 ds_monsoon['mask_height'] = ds_monsoon.sel(height=ds_monsoon["hc_top_index"])["pressure"] < 35000
 
 # %% save
-ds_monsoon.to_netcdf("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
+ds_monsoon.to_netcdf("/work/bm1183/m301049/iwp_framework/ciwp/data/full_snapshot_proc.nc")
 
 # %%

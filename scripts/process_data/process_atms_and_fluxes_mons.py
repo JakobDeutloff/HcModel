@@ -63,7 +63,7 @@ fluxes_noice = change_convention(fluxes_noice)
 fluxes_nosnow = change_convention(fluxes_nosnow)
 
 # %% save
-path = "/work/bm1183/m301049/iwp_framework/mons/data/"
+path = "/work/bm1183/m301049/iwp_framework/ciwp/data/"
 os.remove(path + "atms_proc.nc")
 sample.to_netcdf(path + "atms_proc.nc")
 os.remove(path + "fluxes_allsky_proc.nc")

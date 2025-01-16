@@ -126,7 +126,7 @@ cre_interpolated_average_xr["ice_over_lc_lw"] = xr.DataArray(
 )
 cre_interpolated_average_xr = cre_interpolated_average_xr.assign_coords({"IWP_bins": IWP_bins})
 
-path = "/work/bm1183/m301049/iwp_framework/mons/data/"
+path = "/work/bm1183/m301049/iwp_framework/ciwp/data/"
 os.remove(path + "cre_binned.nc")
 cre_binned_xr.to_netcdf(path + "cre_binned.nc")
 os.remove(path + "cre_mean.nc")

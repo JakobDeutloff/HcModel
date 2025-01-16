@@ -33,10 +33,36 @@ labels = ["Net", "SW", "LW", "Allsky", "Nosnow"]
 ax.legend(handles, labels)
 fig.savefig("plots/iwp_inspection/cre_vs_iwp.png", dpi=300)
 
-
 # %% calculate IWP  without precipitate
 iwp_nosnow = (ds_monsoon["IWC"] * ds_monsoon["dzghalf"]).sum("height")
 precip_path = ((ds_monsoon["snow"] + ds_monsoon["graupel"]) * ds_monsoon["dzghalf"]).sum("height")
+
+# %% calculate IWP Hists
+IWP_bins_cre = cre_allsky["IWP_bins"]
+n_cells = len(ds_monsoon.lat) * len(ds_monsoon.lon)
+hist_allsky, edges = np.histogram(
+    ds_monsoon["IWP"].where(ds_monsoon["mask_height"]), bins=IWP_bins_cre
+)
+hist_allsky = hist_allsky / n_cells
+hist_nosnow, edges = np.histogram(iwp_nosnow.where(ds_monsoon["mask_height"]), bins=IWP_bins_cre)
+hist_nosnow = hist_nosnow / n_cells
+hist_precip, edges = np.histogram(precip_path.where(ds_monsoon["mask_height"]), bins=IWP_bins_cre)
+hist_precip = hist_precip / n_cells
+
+# %% integrate CRE over IWP
+cre_sw_allsky_int = (cre_allsky['connected_sw'] * hist_allsky).sum().values
+cre_lw_allsky_int = (cre_allsky['connected_lw'] * hist_allsky).sum().values
+cre_net_allsky_int = (cre_allsky['connected_net'] * hist_allsky).sum().values
+
+cre_sw_nosnow_int = (cre_nosnow['connected_sw'] * hist_allsky).sum().values
+cre_lw_nosnow_int = (cre_nosnow['connected_lw'] * hist_allsky).sum().values
+cre_net_nosnow_int = (cre_nosnow['connected_net'] * hist_allsky).sum().values
+
+# percentual differences 
+print(f"SW CRE reduced from allsky {cre_sw_allsky_int:.2f} to noprecip {cre_sw_nosnow_int:.2f} by {(100 * (cre_sw_allsky_int - cre_sw_nosnow_int) / cre_sw_allsky_int):.2f}%")
+print(f"LW CRE reduced from allsky {cre_lw_allsky_int:.2f} to noprecip {cre_lw_nosnow_int:.2f} by {(100 * (cre_lw_allsky_int - cre_lw_nosnow_int) / cre_lw_allsky_int):.2f}%")
+print(f"Net CRE reduced from allsky {cre_net_allsky_int:.2f} to noprecip {cre_net_nosnow_int:.2f} by {(100 * (cre_net_allsky_int - cre_net_nosnow_int) / cre_net_allsky_int):.2f}%")
+
 
 # %% correlate iwp and iwp_nosnow
 
@@ -70,18 +96,6 @@ ax.set_xlim(1e-6, 10)
 ax.set_ylim(1e-6, 10)
 ax.legend(frameon=False)    
 fig.savefig("plots/iwp_inspection/iwp_vs_iwp_nosnow.png", dpi=300)
-
-# %% calculate IWP Hists
-IWP_bins_cre = cre_allsky["IWP_bins"]
-n_cells = len(ds_monsoon.lat) * len(ds_monsoon.lon)
-hist_allsky, edges = np.histogram(
-    ds_monsoon["IWP"].where(ds_monsoon["mask_height"]), bins=IWP_bins_cre
-)
-hist_allsky = hist_allsky / n_cells
-hist_nosnow, edges = np.histogram(iwp_nosnow.where(ds_monsoon["mask_height"]), bins=IWP_bins_cre)
-hist_nosnow = hist_nosnow / n_cells
-hist_precip, edges = np.histogram(precip_path.where(ds_monsoon["mask_height"]), bins=IWP_bins_cre)
-hist_precip = hist_precip / n_cells
 
 # %% plot iwp distribution with and without precipitate
 fig, ax = plt.subplots()
