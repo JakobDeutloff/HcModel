@@ -84,6 +84,7 @@ def bin_and_average_cre(cre, IWP_bins, lon_bins, atms):
 
     dummy = np.zeros([len(IWP_bins) - 1, len(lon_bins) - 1])
     cre_arr = {"net": dummy.copy(), "sw": dummy.copy(), "lw": dummy.copy()}
+    cre_arr_std = cre_arr.copy()
 
     for i in range(len(IWP_bins) - 1):
         IWP_mask = (atms["IWP"] > IWP_bins[i]) & (atms["IWP"] < IWP_bins[i + 1])
@@ -99,6 +100,15 @@ def bin_and_average_cre(cre, IWP_bins, lon_bins, atms):
             cre_arr["lw"][i, j] = float(
                 (cre["lw"].where(IWP_mask & lon_mask)).mean().values
             )
+            cre_arr_std["net"][i, j] = float(
+                (cre["net"].where(IWP_mask & lon_mask)).std().values
+            )
+            cre_arr_std["sw"][i, j] = float(
+                (cre["sw"].where(IWP_mask & lon_mask)).std().values
+            )
+            cre_arr_std["lw"][i, j] = float(
+                (cre["lw"].where(IWP_mask & lon_mask)).std().values
+            )
 
     # Interpolate
     interp_cre = {
@@ -112,10 +122,12 @@ def bin_and_average_cre(cre, IWP_bins, lon_bins, atms):
 
     # average over lat
     interp_cre_average = {}
+    cre_std_average = {}
     for key in interp_cre.keys():
         interp_cre_average[key] = np.nanmean(interp_cre[key], axis=1)
+        cre_std_average[key] = np.nanmean(cre_arr_std[key], axis=1)
 
-    return cre_arr, interp_cre, interp_cre_average
+    return cre_arr, interp_cre, interp_cre_average, cre_std_average
 
 
 def calc_connected(atms, frac_no_cloud=0.05, rain=True, convention="icon"):
