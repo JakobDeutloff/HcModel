@@ -14,26 +14,27 @@ cre_nosnow_std = xr.open_dataset(path + "cre_std.nc")
 ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
 
 # %% plot CRE vs IWP
-fig, ax = plt.subplots()
-cre_allsky["connected_sw"].plot(ax=ax, color="blue")
-cre_allsky["connected_lw"].plot(ax=ax, color="red")
-cre_allsky["connected_net"].plot(ax=ax, color="k")
-ax.fill_between(cre_allsky_std.IWP, cre_allsky["connected_net"] - cre_allsky_std["connected_net"], cre_allsky["connected_net"] + cre_allsky_std["connected_net"], color="k", alpha=0.5)
-ax.fill_between(cre_allsky_std.IWP, cre_allsky["connected_sw"] - cre_allsky_std["connected_sw"], cre_allsky["connected_sw"] + cre_allsky_std["connected_sw"], color="blue", alpha=0.5)
-ax.fill_between(cre_allsky_std.IWP, cre_allsky["connected_lw"] - cre_allsky_std["connected_lw"], cre_allsky["connected_lw"] + cre_allsky_std["connected_lw"], color="red", alpha=0.5)
-ax.set_xscale("log")
-ax.set_xlabel("$I$ / kg m$^{-2}$")
-ax.set_ylabel("$C(I)$ / W m$^{-2}$")
-ax.spines[["top", "right"]].set_visible(False)
-handles = [
-    plt.Line2D([0], [0], color="k"),
-    plt.Line2D([0], [0], color="blue"),
-    plt.Line2D([0], [0], color="red"),
-    plt.Line2D([0], [0], color="grey", linestyle="-"),
-    plt.Line2D([0], [0], color="grey", linestyle="--"),
-]
-labels = ["Net", "SW", "LW", "Allsky", "Nosnow"]
-ax.legend(handles, labels)
+fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharey=True)
+cre_allsky["connected_sw"].plot(ax=axes[0], color="blue")
+cre_allsky["connected_lw"].plot(ax=axes[0], color="red")
+cre_allsky["connected_net"].plot(ax=axes[0], color="k")
+axes[0].fill_between(cre_allsky_std.IWP, cre_allsky["connected_net"] - cre_allsky_std["connected_net"], cre_allsky["connected_net"] + cre_allsky_std["connected_net"], color="k", alpha=0.5)
+axes[0].fill_between(cre_allsky_std.IWP, cre_allsky["connected_sw"] - cre_allsky_std["connected_sw"], cre_allsky["connected_sw"] + cre_allsky_std["connected_sw"], color="blue", alpha=0.5)
+axes[0].fill_between(cre_allsky_std.IWP, cre_allsky["connected_lw"] - cre_allsky_std["connected_lw"], cre_allsky["connected_lw"] + cre_allsky_std["connected_lw"], color="red", alpha=0.5)
+axes[0].set_xscale("log")
+axes[0].set_xlabel("$I$ / kg m$^{-2}$")
+axes[0].set_ylabel("$C(I)$ / W m$^{-2}$")
+axes[0].spines[["top", "right"]].set_visible(False)
+
+cre_nosnow["connected_sw"].plot(ax=axes[1], color="blue")
+cre_nosnow["connected_lw"].plot(ax=axes[1], color="red")
+cre_nosnow["connected_net"].plot(ax=axes[1], color="k")
+axes[1].fill_between(cre_nosnow_std.IWP, cre_nosnow["connected_net"] - cre_nosnow_std["connected_net"], cre_nosnow["connected_net"] + cre_nosnow_std["connected_net"], color="k", alpha=0.5)
+axes[1].fill_between(cre_nosnow_std.IWP, cre_nosnow["connected_sw"] - cre_nosnow_std["connected_sw"], cre_nosnow["connected_sw"] + cre_nosnow_std["connected_sw"], color="blue", alpha=0.5)
+axes[1].fill_between(cre_nosnow_std.IWP, cre_nosnow["connected_lw"] - cre_nosnow_std["connected_lw"], cre_nosnow["connected_lw"] + cre_nosnow_std["connected_lw"], color="red", alpha=0.5)
+axes[1].set_xscale("log")
+
+
 fig.savefig("plots/iwp_inspection/cre_vs_iwp.png", dpi=300)
 
 
