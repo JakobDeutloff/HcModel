@@ -7,7 +7,10 @@ import xarray as xr
 # %% load data
 path = "/work/bm1183/m301049/iwp_framework/mons/data/"
 cre_allsky = xr.open_dataset(path + "cre_mean.nc")
-cre_nosnow = xr.open_dataset(path + "cre_nosnow_mean.nc")
+cre_allsky_std = xr.open_dataset(path + "cre_std.nc")
+path = "/work/bm1183/m301049/iwp_framework/ciwp/data/"
+cre_nosnow = xr.open_dataset(path + "cre_mean.nc")
+cre_nosnow_std = xr.open_dataset(path + "cre_std.nc")
 ds_monsoon = xr.open_dataset("/work/bm1183/m301049/iwp_framework/mons/data/full_snapshot_proc.nc")
 
 # %% plot CRE vs IWP
@@ -15,9 +18,9 @@ fig, ax = plt.subplots()
 cre_allsky["connected_sw"].plot(ax=ax, color="blue")
 cre_allsky["connected_lw"].plot(ax=ax, color="red")
 cre_allsky["connected_net"].plot(ax=ax, color="k")
-cre_nosnow["connected_sw"].plot(ax=ax, color="blue", linestyle="--")
-cre_nosnow["connected_lw"].plot(ax=ax, color="red", linestyle="--")
-cre_nosnow["connected_net"].plot(ax=ax, color="k", linestyle="--")
+#cre_nosnow["connected_sw"].plot(ax=ax, color="blue", linestyle="--")
+#cre_nosnow["connected_lw"].plot(ax=ax, color="red", linestyle="--")
+#cre_nosnow["connected_net"].plot(ax=ax, color="k", linestyle="--")
 ax.set_xscale("log")
 ax.set_xlabel("$I$ / kg m$^{-2}$")
 ax.set_ylabel("$C(I)$ / W m$^{-2}$")
