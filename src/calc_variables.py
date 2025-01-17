@@ -84,7 +84,7 @@ def bin_and_average_cre(cre, IWP_bins, lon_bins, atms):
 
     dummy = np.zeros([len(IWP_bins) - 1, len(lon_bins) - 1])
     cre_arr = {"net": dummy.copy(), "sw": dummy.copy(), "lw": dummy.copy()}
-    cre_arr_std = cre_arr.copy()
+    cre_arr_std = {"net": dummy.copy(), "sw": dummy.copy(), "lw": dummy.copy()}
 
     for i in range(len(IWP_bins) - 1):
         IWP_mask = (atms["IWP"] > IWP_bins[i]) & (atms["IWP"] < IWP_bins[i + 1])
