@@ -1,7 +1,6 @@
 # %% import
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 import xarray as xr
 import matplotlib.patches as mpatches
 
@@ -205,6 +204,10 @@ ax.set_ylim(1e-6, 10)
 ax.legend(frameon=False)
 fig.savefig("plots/iwp_inspection/iwp_vs_iwp_nosnow.png", dpi=300)
 
+# %% plot percentual std
+fig, ax = plt.subplots()
+ax.plot(bin_centers, std_binned_iwp_nosnow / binned_iwp_nosnow.values, color="red")
+ax.set_xscale("log")
 
 # %% calculate fraction of precipitate contained in IWP for every bin
 precip_fraction = precip_path / (iwp_nosnow + precip_path)

@@ -28,6 +28,22 @@ gasparini_result = xr.open_dataset(
     "/work/bm1183/m301049/iwp_framework/blaz_adam/gasparini_twp_cre.nc"
 )
 
+# %% get 2C-ICE data 
+
+def read_cloudsat(year):
+    """
+    Function to read CloudSat for a given year
+    """
+    path_cloudsat = "/work/bm1183/m301049/cloudsat/"
+    cloudsat = xr.open_dataset(
+        path_cloudsat + year + "-07-01_" + str(int(year) + 1) + "-07-01_fwp.nc"
+    )
+    # convert ot pandas
+    cloudsat = cloudsat.to_pandas()
+    # select tropics
+    lat_mask = (cloudsat["lat"] <= 30) & (cloudsat["lat"] >= -30)
+    return cloudsat[lat_mask]
+
 # %% bin by IWP and average
 IWP_bins_cf = np.logspace(-5, np.log10(30), 50)
 IWP_bins_cre = np.logspace(-5, 1, 50)
